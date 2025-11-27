@@ -1,0 +1,54 @@
+# === ENTORNO VIRTUAL ===
+.venv/
+venv/
+ENV/
+env/
+
+# === ARCHIVOS SENSIBLES ===
+.env
+*.env
+.env.*
+
+# === PYTHON CACHE ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# === BASES DE DATOS LOCALES ===
+db.sqlite3
+
+# === LOGS ===
+*.log
+logs/
+*.out
+
+# === COMPILADOS O BUILD ===
+build/
+dist/
+*.egg-info/
+*.egg
+
+# === DJANGO ===
+staticfiles/
+media/
+static/
+media_root/
+*.pot
+
+# === MIGRACIONES GENERADAS ===
+*/migrations/*
+!*/migrations/__init__.py
+
+# === EDITOR / IDE ===
+.vscode/
+.idea/
+*.swp
+*~
+
+# === SISTEMA OPERATIVO ===
+.DS_Store
+Thumbs.db
+
+# === POSTMAN ===
+*.postman_environment.json
+*.postman_globals.json
