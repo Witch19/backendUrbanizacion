@@ -1,4 +1,7 @@
-### README – Backend Urbanización
+Backend Urbanización 
+Sistema de Gestión y Control de Acceso
+
+Joselyn Saavedra – 2025
 1. Descripción del proyecto
 
 Backend Urbanización es un sistema de gestión y control de acceso para una urbanización.
@@ -217,10 +220,3 @@ Se incluye una colección Postman con:
 - Endpoints CRUD
 - Pruebas de permisos y roles
 - Ejemplos de uso
-
-
-16. Autor
-
-Joselyn Saavedra
-Proyecto académico – Backend Urbanización
-2025
