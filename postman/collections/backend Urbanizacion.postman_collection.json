@@ -1,0 +1,214 @@
+{
+  "info": {
+    "_postman_id": "59500fec-775d-48ce-a455-b91d10709792",
+    "name": "backend Urbanizacion",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "id": "b0008da0-214f-4d4d-bc66-67102c6249f2",
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"josytst.js@gmail.com\",\r\n  \"password\": \"123456789\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/login/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "login",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Viviendas",
+      "id": "a418ad3d-b88f-49a4-96bf-e8203f61b0a3",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MjEyNzM4LCJpYXQiOjE3NjQyMTI0MzgsImp0aSI6IjA2Y2ZjYTJiY2VjMzRiYWY4YTgwOGQ3ZmI4NTNmZWVhIiwidXNlcl9pZCI6IjIifQ.XZcwjf9_921_4jHMiJPsoJ-B2mgMZDw9BnmC79_87jE",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"numero\": \"A-12\",\r\n    \"calle\": \"Av. Los Arrayanes\",\r\n    \"propietario\": \"Josy\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/viviendas/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "viviendas",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Refrescar",
+      "id": "ff426c67-ed52-4a91-bcdf-f56d08f18c61",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MjEyNzM4LCJpYXQiOjE3NjQyMTI0MzgsImp0aSI6IjA2Y2ZjYTJiY2VjMzRiYWY4YTgwOGQ3ZmI4NTNmZWVhIiwidXNlcl9pZCI6IjIifQ.XZcwjf9_921_4jHMiJPsoJ-B2mgMZDw9BnmC79_87jE",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MjEyNzM4LCJpYXQiOjE3NjQyMTI0MzgsImp0aSI6IjA2Y2ZjYTJiY2VjMzRiYWY4YTgwOGQ3ZmI4NTNmZWVhIiwidXNlcl9pZCI6IjIifQ.XZcwjf9_921_4jHMiJPsoJ-B2mgMZDw9BnmC79_87jE\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/refresh/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "refresh",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Eliminar",
+      "id": "cd53689a-a822-48d1-be3e-547ba1baa870",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MjEyNzM4LCJpYXQiOjE3NjQyMTI0MzgsImp0aSI6IjA2Y2ZjYTJiY2VjMzRiYWY4YTgwOGQ3ZmI4NTNmZWVhIiwidXNlcl9pZCI6IjIifQ.XZcwjf9_921_4jHMiJPsoJ-B2mgMZDw9BnmC79_87jE",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/viviendas/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "viviendas",
+            "1",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Actualizar",
+      "id": "06967f37-ec72-47e4-b584-c58380e9cc27",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY0MjEyNzM4LCJpYXQiOjE3NjQyMTI0MzgsImp0aSI6IjA2Y2ZjYTJiY2VjMzRiYWY4YTgwOGQ3ZmI4NTNmZWVhIiwidXNlcl9pZCI6IjIifQ.XZcwjf9_921_4jHMiJPsoJ-B2mgMZDw9BnmC79_87jE",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"numero\": \"A-12\",\r\n    \"calle\": \"Av. Los Arrayanes\",\r\n    \"propietario\": \"Josy\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/viviendas/2/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "viviendas",
+            "2",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Viviendas-get",
+      "id": "fdfb16e6-499c-41b9-9ba9-8eeb8bc026e5",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/viviendas/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "viviendas",
+            ""
+          ]
+        }
+      }
+    }
+  ]
+}
