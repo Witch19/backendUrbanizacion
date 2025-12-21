@@ -1,9 +1,7 @@
-name: Deploy Django Urbanizacion to VPS
+name: Deploy Django Urbanizacion
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
     branches: [ main, master ]
 
 jobs:
@@ -32,13 +30,13 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        working-directory: backendUrbanizacion/urbanizacion_backend
+        working-directory: backendUrbanizacion/backendUrbanizacion
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run tests
-        working-directory: backendUrbanizacion/urbanizacion_backend
+        working-directory: backendUrbanizacion/backendUrbanizacion
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
           SECRET_KEY: test-secret-key
@@ -67,34 +65,30 @@ jobs:
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           VENV_PATH: ${{ secrets.VENV_PATH }}
         run: |
-          ssh $VPS_USER@$VPS_HOST "
+          ssh $VPS_USER@$VPS_HOST << 'EOF'
             set -e
 
-            echo '🔐 Fix git safe directory'
-            git config --global --add safe.directory '*'
-
-            echo '⿡ Actualizando código'
+            echo "📁 Entrando al proyecto"
             cd $PROJECT_PATH
-            git fetch origin
-            git reset --hard origin/\$(git branch --show-current)
 
-            echo '⿢ Activando entorno virtual'
+            echo "🔄 Actualizando código"
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "🐍 Activando entorno virtual"
             source $VENV_PATH/bin/activate
 
-            echo '⿣ Instalando dependencias'
+            echo "📦 Instalando dependencias"
             pip install -r requirements.txt
 
-            echo '⿤ Cargando variables de entorno'
-            if [ -f .env ]; then set -a && source .env && set +a; fi
-
-            echo '⿥ Migraciones'
+            echo "🧱 Migraciones"
             python manage.py migrate --noinput
 
-            echo '⿦ Static files'
+            echo "🎨 Collectstatic"
             python manage.py collectstatic --noinput --clear
 
-            echo '⿧ Reiniciando servicios'
+            echo "♻ Reiniciando servicios"
             sudo systemctl restart gunicorn
             sudo systemctl restart nginx
 
-            echo '✅ DEPLOY COMPLETADO'
+            echo "✅ DEPLOY COMPLETADO"
