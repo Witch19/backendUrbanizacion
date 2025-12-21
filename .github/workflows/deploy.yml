@@ -1,3 +1,11 @@
+name: Deploy Django Urbanizacion to VPS
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -24,19 +32,20 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        working-directory: billing_api/backendUrbanizacion/urbanizacion_backend
+        working-directory: backendUrbanizacion/urbanizacion_backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run tests
-        working-directory: billing_api/backendUrbanizacion/urbanizacion_backend
+        working-directory: backendUrbanizacion/urbanizacion_backend
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
           SECRET_KEY: test-secret-key
         run: |
-          python manage.py test
-          deploy:
+          python manage.py test
+
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -47,8 +56,8 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to VPS
@@ -64,32 +73,28 @@ jobs:
             echo '🔐 Fix git safe directory'
             git config --global --add safe.directory '*'
 
-            echo '📂 Ir al proyecto'
+            echo '⿡ Actualizando código'
             cd $PROJECT_PATH
-
-            echo '⬇ Actualizando código'
             git fetch origin
-            git reset --hard origin/main
+            git reset --hard origin/\$(git branch --show-current)
 
-            echo '🐍 Activando entorno virtual'
+            echo '⿢ Activando entorno virtual'
             source $VENV_PATH/bin/activate
 
-            echo '📦 Instalando dependencias'
+            echo '⿣ Instalando dependencias'
             pip install -r requirements.txt
 
-            echo '🌱 Variables de entorno'
-            set -a
-            source .env
-            set +a
+            echo '⿤ Cargando variables de entorno'
+            if [ -f .env ]; then set -a && source .env && set +a; fi
 
-            echo '🗄 Migraciones'
+            echo '⿥ Migraciones'
             python manage.py migrate --noinput
 
-            echo '🎨 Static files'
+            echo '⿦ Static files'
             python manage.py collectstatic --noinput --clear
 
-            echo '🔁 Reiniciando servicios'
+            echo '⿧ Reiniciando servicios'
             sudo systemctl restart gunicorn
             sudo systemctl restart nginx
 
-            echo '✅ Deploy completado'
+            echo '✅ DEPLOY COMPLETADO'
