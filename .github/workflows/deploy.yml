@@ -60,7 +60,13 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+          if [ -z "${{ secrets.VPS_HOST }}" ]; then
+            echo "❌ ERROR: VPS_HOST no está definido en Secrets"
+            exit 1
+          fi
+
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts  
 
       - name: 🚀 Deploy to VPS
         env:
