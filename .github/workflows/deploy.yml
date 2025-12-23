@@ -60,13 +60,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
-          if [ -z "${{ secrets.VPS_HOST }}" ]; then
-            echo "❌ ERROR: VPS_HOST no está definido en Secrets"
-            exit 1
-          fi
-
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts  
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🚀 Deploy to VPS
         env:
@@ -74,12 +68,20 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USERNAME }}
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           VENV_PATH: ${{ secrets.VENV_PATH }}
+          REPO_URL: https://github.com/TU_USUARIO/TU_REPO.git
         run: |
           ssh $VPS_USER@$VPS_HOST << 'EOF'
             set -e
 
-            echo "📁 Entrando al proyecto"
-            cd $PROJECT_PATH
+            echo "📁 Preparando proyecto"
+            mkdir -p "$PROJECT_PATH"
+
+            if [ ! -d "$PROJECT_PATH/.git" ]; then
+              echo "📥 Clonando repositorio por primera vez"
+              git clone "$REPO_URL" "$PROJECT_PATH"
+            fi
+
+            cd "$PROJECT_PATH"
 
             echo "🔄 Actualizando código"
             git fetch origin
@@ -89,7 +91,7 @@ jobs:
             cd urbanizacion_backend
 
             echo "🐍 Activando entorno virtual"
-            source $VENV_PATH/bin/activate
+            source "$VENV_PATH/bin/activate"
 
             echo "📦 Instalando dependencias"
             pip install -r requirements.txt
@@ -105,38 +107,4 @@ jobs:
             sudo systemctl restart nginx
 
             echo "✅ DEPLOY COMPLETADO"
-          EOF
-          
-          ssh $VPS_USER@$VPS_HOST << EOF
-          set -e
-
-          echo "===== DEBUG START ====="
-
-          echo "🔹 Usuario remoto:"
-          whoami
-
-          echo "🔹 Directorio inicial:"
-          pwd
-
-          echo "🔹 PROJECT_PATH recibido:"
-          echo "$PROJECT_PATH"
-
-          echo "🔹 Contenido de PROJECT_PATH:"
-          ls -la $PROJECT_PATH || echo "❌ No se pudo listar PROJECT_PATH"
-
-          echo "🔹 Entrando a PROJECT_PATH"
-          cd $PROJECT_PATH || { echo "❌ cd falló"; exit 1; }
-
-          echo "🔹 Directorio actual:"
-          pwd
-
-          echo "🔹 ¿Existe .git?"
-          ls -la .git || echo "❌ .git NO existe aquí"
-
-          echo "🔹 Estado git:"
-          git status || echo "❌ git status falló"
-
-          echo "===== DEBUG END ====="
-
-          # 🔽 luego sigue tu deploy normal
           EOF
