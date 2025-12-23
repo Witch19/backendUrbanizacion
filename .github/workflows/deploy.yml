@@ -60,6 +60,12 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+          if [ -z "${{ secrets.VPS_HOST }}" ]; then
+            echo "❌ ERROR: VPS_HOST no está definido en Secrets"
+            exit 1
+          fi
+
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🚀 Deploy to VPS
@@ -68,20 +74,22 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USERNAME }}
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           VENV_PATH: ${{ secrets.VENV_PATH }}
-          REPO_URL: https://github.com/TU_USUARIO/TU_REPO.git
         run: |
-          ssh $VPS_USER@$VPS_HOST << 'EOF'
+          ssh $VPS_USER@$VPS_HOST \
+          "PROJECT_PATH='$PROJECT_PATH' VENV_PATH='$VENV_PATH' bash -s" << EOF
             set -e
 
-            echo "📁 Preparando proyecto"
-            mkdir -p "$PROJECT_PATH"
+            echo "===== DEPLOY START ====="
+            echo "Usuario remoto: \$(whoami)"
+            echo "PROJECT_PATH = \$PROJECT_PATH"
+            echo "VENV_PATH    = \$VENV_PATH"
 
-            if [ ! -d "$PROJECT_PATH/.git" ]; then
-              echo "📥 Clonando repositorio por primera vez"
-              git clone "$REPO_URL" "$PROJECT_PATH"
-            fi
+            echo "📁 Entrando al repo"
+            cd "\$PROJECT_PATH"
 
-            cd "$PROJECT_PATH"
+            echo "📂 Verificando repo"
+            ls -la
+            git status
 
             echo "🔄 Actualizando código"
             git fetch origin
@@ -91,7 +99,7 @@ jobs:
             cd urbanizacion_backend
 
             echo "🐍 Activando entorno virtual"
-            source "$VENV_PATH/bin/activate"
+            source "\$VENV_PATH/bin/activate"
 
             echo "📦 Instalando dependencias"
             pip install -r requirements.txt
@@ -107,4 +115,5 @@ jobs:
             sudo systemctl restart nginx
 
             echo "✅ DEPLOY COMPLETADO"
-          EOF
+            echo "===== DEPLOY END ====="
+            EOF
