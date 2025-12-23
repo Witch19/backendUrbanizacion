@@ -60,12 +60,6 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
-          if [ -z "${{ secrets.VPS_HOST }}" ]; then
-            echo "❌ ERROR: VPS_HOST no está definido en Secrets"
-            exit 1
-          fi
-
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🚀 Deploy to VPS
@@ -75,48 +69,49 @@ jobs:
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
           VENV_PATH: ${{ secrets.VENV_PATH }}
         run: |
-          ssh $VPS_USER@$VPS_HOST \
-          "PROJECT_PATH='$PROJECT_PATH' VENV_PATH='$VENV_PATH' bash -s" << EOF
-            set -e
+          ssh $VPS_USER@$VPS_HOST "PROJECT_PATH='$PROJECT_PATH' VENV_PATH='$VENV_PATH' bash -s" <<EOF
+          set -e
 
-            echo "===== DEPLOY START ====="
-            echo "Usuario remoto: \$(whoami)"
-            echo "PROJECT_PATH = \$PROJECT_PATH"
-            echo "VENV_PATH    = \$VENV_PATH"
+          echo "===== DEPLOY START ====="
+          echo "Usuario remoto: \$(whoami)"
+          echo "PROJECT_PATH = \$PROJECT_PATH"
+          echo "VENV_PATH    = \$VENV_PATH"
 
-            echo "📁 Entrando al repo"
-            cd "\$PROJECT_PATH"
+          echo "📁 Preparando proyecto"
+          mkdir -p "\$PROJECT_PATH"
+          cd "\$PROJECT_PATH"
 
-            echo "🔐 Marcando repo como seguro"
-            git config --global --add safe.directory "$PROJECT_PATH"
+          echo "🔐 Marcando repo como seguro"
+          git config --global --add safe.directory "\$PROJECT_PATH"
 
-            echo "📂 Verificando repo"
-            ls -la
-            git status
+          echo "📂 Verificando repo"
+          if [ ! -d ".git" ]; then
+            echo "❌ ERROR: No existe .git en PROJECT_PATH"
+            exit 1
+          fi
 
-            echo "🔄 Actualizando código"
-            git fetch origin
-            git reset --hard origin/main
+          echo "🔄 Actualizando código"
+          git fetch origin
+          git reset --hard origin/main
 
-            echo "📂 Entrando a Django project"
-            cd urbanizacion_backend
+          echo "📂 Entrando a Django project"
+          cd urbanizacion_backend
 
-            echo "🐍 Activando entorno virtual"
-            source "\$VENV_PATH/bin/activate"
+          echo "🐍 Activando entorno virtual"
+          source "\$VENV_PATH/bin/activate"
 
-            echo "📦 Instalando dependencias"
-            pip install -r requirements.txt
+          echo "📦 Instalando dependencias"
+          pip install -r requirements.txt
 
-            echo "🧱 Migraciones"
-            python manage.py migrate --noinput
+          echo "🧱 Migraciones"
+          python manage.py migrate --noinput
 
-            echo "🎨 Collectstatic"
-            python manage.py collectstatic --noinput --clear
+          echo "🎨 Collectstatic"
+          python manage.py collectstatic --noinput --clear
 
-            echo "♻ Reiniciando servicios"
-            sudo systemctl restart gunicorn
-            sudo systemctl restart nginx
+          echo "♻ Reiniciando servicios"
+          sudo systemctl restart gunicorn
+          sudo systemctl restart nginx
 
-            echo "✅ DEPLOY COMPLETADO"
-            echo "===== DEPLOY END ====="
-            EOF
+          echo "===== DEPLOY END ====="
+          EOF
