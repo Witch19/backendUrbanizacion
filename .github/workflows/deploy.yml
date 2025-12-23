@@ -87,6 +87,9 @@ jobs:
             echo "📁 Entrando al repo"
             cd "\$PROJECT_PATH"
 
+            echo "🔐 Marcando repo como seguro"
+            git config --global --add safe.directory "$PROJECT_PATH"
+
             echo "📂 Verificando repo"
             ls -la
             git status
